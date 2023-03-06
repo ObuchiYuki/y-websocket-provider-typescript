@@ -8,8 +8,6 @@ import { Observable } from 'lib0/observable'
 
 import { sync, auth, Awareness, AwarenessUpdate } from 'y-protocols-typescript'
 
-import { WebSocket, ErrorEvent, CloseEvent } from "ws"
-
 // ============================================================================================ //
 // MARK: Type
 export type BroadcastSubscriber = (data: ArrayBuffer, origin: any) => void
@@ -17,7 +15,7 @@ export type MessageType = typeof MessageType.sync | typeof MessageType.queryAwar
 export type ConnectionStatus = "connected"|"connecting"|"disconnected"
 export type Config = {
     connectOnLaunch?: boolean, 
-    WebSocketClass?: typeof WebSocket, 
+    webSocketClass?: typeof WebSocket, 
     resyncInterval?: number,
     maxBackoffTime?: number, 
     enableBroadcast?: boolean
@@ -118,7 +116,7 @@ export class WebSocketProvider extends Observable<string> {
         this.awareness = new Awareness(doc)
         this._config = {
             connectOnLaunch: config.connectOnLaunch ?? true,
-            webSocketClass: config.WebSocketClass ?? WebSocket,
+            webSocketClass: config.webSocketClass ?? WebSocket,
             resyncInterval: config.resyncInterval ?? -1,
             maxBackoffTime: config.maxBackoffTime ?? 2500,
             enableBroadcast: config.enableBroadcast ?? true
@@ -271,9 +269,7 @@ export class WebSocketProvider extends Observable<string> {
             const encoder = encoding.createEncoder()
             encoding.writeVarUint(encoder, MessageType.sync)
             sync.writeSyncStep1(encoder, this.document)
-            socket.send(encoding.toUint8Array(encoder), error => {
-                if (error != null) socket.close()
-            })
+            socket.send(encoding.toUint8Array(encoder))
             
             // broadcast local awareness state
             if (this.awareness.localState !== null) {

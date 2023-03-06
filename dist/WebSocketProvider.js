@@ -30,7 +30,6 @@ const encoding = __importStar(require("lib0/encoding"));
 const decoding = __importStar(require("lib0/decoding"));
 const observable_1 = require("lib0/observable");
 const y_protocols_typescript_1 = require("y-protocols-typescript");
-const ws_1 = require("ws");
 // ============================================================================================ //
 // MARK: Consts
 var MessageType;
@@ -83,7 +82,7 @@ class WebSocketProvider extends observable_1.Observable {
         this.awareness = new y_protocols_typescript_1.Awareness(doc);
         this._config = {
             connectOnLaunch: (_a = config.connectOnLaunch) !== null && _a !== void 0 ? _a : true,
-            webSocketClass: (_b = config.WebSocketClass) !== null && _b !== void 0 ? _b : ws_1.WebSocket,
+            webSocketClass: (_b = config.webSocketClass) !== null && _b !== void 0 ? _b : WebSocket,
             resyncInterval: (_c = config.resyncInterval) !== null && _c !== void 0 ? _c : -1,
             maxBackoffTime: (_d = config.maxBackoffTime) !== null && _d !== void 0 ? _d : 2500,
             enableBroadcast: (_e = config.enableBroadcast) !== null && _e !== void 0 ? _e : true
@@ -225,10 +224,7 @@ class WebSocketProvider extends observable_1.Observable {
             const encoder = encoding.createEncoder();
             encoding.writeVarUint(encoder, MessageType.sync);
             y_protocols_typescript_1.sync.writeSyncStep1(encoder, this.document);
-            socket.send(encoding.toUint8Array(encoder), error => {
-                if (error != null)
-                    socket.close();
-            });
+            socket.send(encoding.toUint8Array(encoder));
             // broadcast local awareness state
             if (this.awareness.localState !== null) {
                 const encoderAwarenessState = encoding.createEncoder();
@@ -305,7 +301,7 @@ class WebSocketProvider extends observable_1.Observable {
             return;
         const timer = setInterval(() => {
             var _a;
-            if (((_a = this.socket) === null || _a === void 0 ? void 0 : _a.readyState) !== ws_1.WebSocket.OPEN)
+            if (((_a = this.socket) === null || _a === void 0 ? void 0 : _a.readyState) !== WebSocket.OPEN)
                 return;
             const encoder = encoding.createEncoder();
             encoding.writeVarUint(encoder, MessageType.sync);

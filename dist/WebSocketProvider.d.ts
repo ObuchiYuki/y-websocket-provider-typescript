@@ -1,13 +1,12 @@
 import * as Y from 'yjs';
 import { Observable } from 'lib0/observable';
 import { Awareness } from 'y-protocols-typescript';
-import { WebSocket, ErrorEvent, CloseEvent } from "ws";
 export type BroadcastSubscriber = (data: ArrayBuffer, origin: any) => void;
 export type MessageType = typeof MessageType.sync | typeof MessageType.queryAwareness | typeof MessageType.awareness | typeof MessageType.auth;
 export type ConnectionStatus = "connected" | "connecting" | "disconnected";
 export type Config = {
     connectOnLaunch?: boolean;
-    WebSocketClass?: typeof WebSocket;
+    webSocketClass?: typeof WebSocket;
     resyncInterval?: number;
     maxBackoffTime?: number;
     enableBroadcast?: boolean;
